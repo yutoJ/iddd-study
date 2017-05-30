@@ -68,12 +68,27 @@ CQRSは、、、？
 
 例: 質問をされた時に、質問の答えを変えない。
 
-rule
+#### rule
 
 statusを持つinstanceのstatusを変えるときはcommandとなり、void型。queryはその逆で変更してはいけない。
 
 command model とは,,,? class
 
 BackLogItem classが、commitTo(springId)の中で、
-DomainEventPublisherを生成し、publishしていた。
+DomainEventPublisher (Observer Patternで実装)を生成し、publishしていた。このPublisherはquery modelの更新を保証する。よってsubscriberが必要
+
+→この当たりはlanmda architectureのbatch viewとreal time viewにちょっと近いかもしれない。
+law dataをどんどん積み上ガっている状態から、batchが定期的にquery用にdataを処理し、queryは処理後のdataへaccessしてclientへ返す。
+
+この辺りの同期、非同期はSLAによる。また、Event Sourcingを
+考えるのも良い。
+
 例ではcommitToは、`@Transactional`を持つcommitBacklogToSprint内で使われている。
+
+command, query modelのDBは、同じDB, schemaでいいよう、tableは。
+
+#### Questions
+
+command, query modelって何単位？object ?table ? 
+
+例えば、更新requestが発行されて, 同期で更新して更新結果をviewに表示させたい時、1 transaction内での処理はaction modelを起動して同期で結果を待ち、query modelを access
