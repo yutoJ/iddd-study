@@ -6,10 +6,10 @@
  - Upstream downstream : 処理の流れ、
  - mud dumpling :antiだけど一緒にしちゃう,
  - Open Host service : REST
- - Published Language :Model Convertion (xmlとからしい、OHSとの明確な比較はちょっと微妙)
+ - Published Language :Model Convertion. messageの中身の共通認識
  - AntiCurruption Layer :明確な方法はない。考え方
 
- なぜ、project ovationは、ACLでくくられてる？coreだから？
+ なぜ、project ovatio (core domain)nは、ACLでくくられてる？coreだから？
  
 #### ACL between idOvation and collabOvation
  - MemberService has TeamMember, Production object
@@ -26,4 +26,4 @@
 #### 何か分からない
 
 1. RPC?
-2. Translator patternが初耳
+2. Translator patternが初耳→httpから受け取ったものをobject変換してっぽい (toMember)
