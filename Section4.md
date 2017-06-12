@@ -111,7 +111,3 @@ updated_atを持っていたとしてもdataがどう変化したかは記録で
 #### Questions
 
 command, query modelって何単位？object ?table ? 
-
-例えば、更新requestが発行されて, 同期で更新して更新結果をviewに表示させたい時、1 transaction内での処理はaction modelを起動して同期で結果を待ち、query modelにて最新情報を更新してviewに返すような動き？
-
-tableを分けるとquery側への更新はだれがどのタイミングで行うか？全部CQRSにした方がいいというのが前提？
