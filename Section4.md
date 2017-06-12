@@ -19,7 +19,6 @@ keyword
 #### check
 
 1. testはportに依存しないでもつくれるはず (coverageも満たせる？)
-
 2. RESTful httpは、resourceを1つのURIに載せている。
 
 #### other
@@ -83,27 +82,36 @@ law dataをどんどん積み上ガっている状態から、batchが定期的�
 この辺りの同期、非同期はSLAによる。また、Event Sourcingを
 考えるのも良い。
 
+
 例ではcommitToは、`@Transactional`を持つcommitBacklogToSprint内で使われている。
 
-command, query modelのDBは、同じDB, schemaでいいよう、tableは別にするか？
+command, query modelのDBは、同じDB, schemaでいいよう.
 
-clientからcommandを叩く、command内には実施させたい振る舞いの名前と引数がある。それが実施される。
+#### pipe and filter
 
-発行されたcommandはcommnadhandlerが受け取るらしい。
+pipe: パイプラインの処理単位
+filter: 入力データの取得, 入力データの変更・洗練・変換, データの出力
 
-clientからcommandを叩くという動作は、application serviceのmethod実行となる場合もあるし、
-複数のcommnad handlerを一つのapplication serviceとして扱うのを分類方式というよう。
-単一methodをもつ単一classという方式もあり専門方式というよう。
+→これって用はbatch? っぽいが、並列処理させることが主目的？
 
-sampleのsourceは`tenant, backlogitem, sprint`を1 command method内で集約してるっぽかった、内訳は
-`sprint`に`tenant, backlogitem`をsetして、`backlogitem`のcommitTo metodを読んでいる。
-また、commitToは、logicのあと、最後にDomainEventPublisherよりpublishを実行
+#### Event sourcing
 
+updated_atを持っていたとしてもdataがどう変化したかは記録できない CMSのようなversion管理の概念を取り入れると追跡できる。
 
+アーキテクチャーは更新eventを記録し、実際に参照するときは、そのタイミングでさまったのを返す。ただし、ずっと過去のeventのものをさまるのは時間がかかるので、ある程度snapshotをもうけながらさまる必要がある。
+
+とはいえ、上記の実装はCQRSの方式を活用する。
+
+##### 業務的なmerit
+ - bugや障害があっても、その部分を修正して再度
+集約を作ればいいという発想ができるようになる。
+※ここは、結構運用や実装を練らないと難しそう
+ - 追跡ができるので、分析や傾向が掴みやすく、BI的にもいいそう。
 
 #### Questions
 
 command, query modelって何単位？object ?table ? 
 
-例えば、更新requestが発行されて, 同期で更新して更新結果をviewに表示させたい時、1 transaction内での処理はaction modelを起動して同期で結果を待ち、query modelを access
+例えば、更新requestが発行されて, 同期で更新して更新結果をviewに表示させたい時、1 transaction内での処理はaction modelを起動して同期で結果を待ち、query modelにて最新情報を更新してviewに返すような動き？
 
+tableを分けるとquery側への更新はだれがどのタイミングで行うか？全部CQRSにした方がいいというのが前提？
